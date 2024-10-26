@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/simpledotcss/simple.min.css">
+    <title>Login</title>
+</head>
+<body>
+    <form th:action="@{/login}" method="POST">
+        <h2>Login</h2>
+        <div th:if="${error}">
+            <p th:text="${error}"></p>
+        </div>
+        <div>
+            <label for="username">User Name:</label>
+            <input id="username" name="username" type="text">
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input id="password" name="password" type="password">
+        </div>
+        <div>
+            <input type="submit" value="Login">
+        </div>
+    </form>
+</body>
+</html>

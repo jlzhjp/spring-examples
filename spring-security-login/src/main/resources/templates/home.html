@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://unpkg.com/simpledotcss/simple.min.css">
+    <title>Home</title>
+</head>
+<body>
+
+<h1>Hello</h1>
+
+<div sec:authorize="isAnonymous()">
+    <a th:href="@{/login}">Login</a>
+    or
+    <a th:href="@{/signup}">Sign up</a>
+</div>
+
+<div sec:authorize="isAuthenticated()">
+    Hello <span sec:authentication="name"></span>
+    <form method="POST" th:action="@{/logout}">
+        <input type="submit" value="Logout">
+    </form>
+</div>
+
+</body>
+</html>
