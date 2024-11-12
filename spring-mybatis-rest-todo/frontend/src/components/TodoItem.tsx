@@ -1,41 +1,21 @@
 import { XCircleIcon, CheckCircle, Circle } from "lucide-react"
 import { Button } from "./ui/button"
 import { type Todo } from "@/lib/types"
-import useSWR, { useSWRConfig } from "swr"
 import { useState } from "react"
 import { Input } from "./ui/input"
+import useTodo from "@/lib/useTodo"
 
 type TodoProps = {
   todo: Todo
 }
 
 export default function TodoItem({ todo }: TodoProps) {
-  const { fetcher, mutate } = useSWRConfig()
-  const { data } = useSWR<Todo>(`/todos/${todo.id}`, {
+  const { data, patch, del } = useTodo(todo.id, {
     fallbackData: todo,
   })
 
   const [isEditing, setIsEditing] = useState(false)
   const [titleEditingValue, setTitleEditingValue] = useState("")
-
-  async function patchTodo(todoProps: Partial<Todo>) {
-    const patch = async () => {
-      return (await fetcher!(`/todos/${data!.id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(todoProps),
-      })) as Todo
-    }
-
-    return await mutate(`/todos/${data!.id}`, patch(), {
-      optimisticData: {
-        ...data,
-        ...todoProps,
-      },
-    })
-  }
 
   const handleTitleClick = () => {
     setTitleEditingValue(data!.title)
@@ -47,25 +27,21 @@ export default function TodoItem({ todo }: TodoProps) {
   ) => {
     if (event.key !== "Enter") return
 
-    const updatedTodo = await patchTodo({
+    await patch({
       title: (event.target as HTMLInputElement).value,
     })
+
     setIsEditing(false)
-    return updatedTodo
   }
 
   const handleTodoStatusSwitch = async () => {
-    const updatedTodo = await patchTodo({
+    await patch({
       completed: !data!.completed,
     })
-    return updatedTodo
   }
 
   const handleDelete = async () => {
-    await fetcher!(`/todos/${data!.id}`, {
-      method: "DELETE",
-    })
-    mutate("/todos")
+    await del()
   }
 
   return (
